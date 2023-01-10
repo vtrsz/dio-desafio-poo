@@ -7,6 +7,10 @@ public class Dev {
     private Set<Conteudo> conteudosInscritos = new LinkedHashSet<>();
     private Set<Conteudo> conteudosConcluidos = new LinkedHashSet<>();
 
+    private Set<Desafio> desafiosIniciados = new LinkedHashSet<>();
+
+    private Set<Desafio> desafiosConcluidos = new LinkedHashSet<>();
+
     public void inscreverBootcamp(Bootcamp bootcamp){
         this.conteudosInscritos.addAll(bootcamp.getConteudos());
         bootcamp.getDevsInscritos().add(this);
@@ -22,19 +26,40 @@ public class Dev {
         }
     }
 
-    public double calcularTotalXp() {
-        Iterator<Conteudo> iterator = this.conteudosConcluidos.iterator();
-        double soma = 0;
-        while(iterator.hasNext()){
-            double next = iterator.next().calcularXp();
-            soma += next;
+    public boolean iniciarDesafio(Desafio desafio) {
+        if (this.desafiosConcluidos.contains(desafio)) {
+            System.err.println("Você já concluiu este desafio!");
+            return false;
         }
-        return soma;
+        if (this.desafiosIniciados.add(desafio)) {
+            System.out.println("Desafio iniciado! Boa sorte.");
+            return true;
+        }
+        return false;
+    }
 
-        /*return this.conteudosConcluidos
+    public boolean completarDesafio(Desafio desafio) {
+        if (this.desafiosIniciados.contains(desafio)) {
+            this.desafiosConcluidos.add(desafio);
+            this.desafiosIniciados.remove(desafio);
+            System.out.println("Desafio concluído! Parabéns!!!");
+            return true;
+        } else {
+            System.err.println("Erro! Você não iniciou este desafio!");
+        }
+        return false;
+    }
+
+    public double calcularTotalXp() {
+        double xpConteudos = this.conteudosConcluidos
                 .stream()
                 .mapToDouble(Conteudo::calcularXp)
-                .sum();*/
+                .sum();
+        double xpDesafios = this.desafiosConcluidos
+                .stream()
+                .mapToDouble(Desafio::calcularXp)
+                .sum();
+        return  xpConteudos + xpDesafios;
     }
 
 
@@ -60,6 +85,22 @@ public class Dev {
 
     public void setConteudosConcluidos(Set<Conteudo> conteudosConcluidos) {
         this.conteudosConcluidos = conteudosConcluidos;
+    }
+
+    public Set<Desafio> getDesafiosIniciados() {
+        return desafiosIniciados;
+    }
+
+    public void setDesafiosIniciados(Set<Desafio> desafiosIniciados) {
+        this.desafiosIniciados = desafiosIniciados;
+    }
+
+    public Set<Desafio> getDesafiosConcluidos() {
+        return desafiosConcluidos;
+    }
+
+    public void setDesafiosConcluidos(Set<Desafio> desafiosConcluidos) {
+        this.desafiosConcluidos = desafiosConcluidos;
     }
 
     @Override
